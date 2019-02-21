@@ -3,26 +3,37 @@ import React from 'react'
 class App extends React.Component {
 
 	state = {
-		data: null
+		posts: null
 	}
 
 	componentDidMount() {
-		const promise = fetch('http://localhost:7777/')
+		const promise = fetch('http://localhost:7777/posts')
 		promise.then((response) => {
-			return response.text()
-		}).then((data) => {
+			return response.json()
+		}).then((posts) => {
 			this.setState({
-				data: data
+				posts: posts
 			})
 		})
 	}
 
 	render() {
-		if (this.state.data === null) {
+		if (this.state.posts === null) {
 			return <h2>Loading...</h2>
 		}
 		else {
-			return <h2>{this.state.data}</h2>
+			const postElements = this.state.posts.map((post) => {
+				return (
+					<div>
+						<p>{post.body}</p>
+						<h6>{post.date}</h6>
+					</div>
+				)
+			})
+
+			return (
+				<div>{postElements}</div>
+			)
 		}
 	}
 
