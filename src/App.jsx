@@ -3,18 +3,12 @@ import React from 'react'
 class App extends React.Component {
 
 	state = {
-		posts: null
+		posts: null,
+		loading: true
 	}
 
 	componentDidMount() {
-		const promise = fetch('http://localhost:7777/posts')
-		promise.then((response) => {
-			return response.json()
-		}).then((posts) => {
-			this.setState({
-				posts: posts
-			})
-		})
+		this.load()
 	}
 
 	render() {
@@ -32,9 +26,33 @@ class App extends React.Component {
 			})
 
 			return (
-				<div>{postElements}</div>
+				<div>
+					{this.state.loading ? <div className='loading' /> : null}
+					<button onClick={this.onAddPost}>Add post</button>
+					{postElements}
+				</div>
 			)
 		}
+	}
+
+	onAddPost = () => {
+		const promise = fetch('http://localhost:7777/add-post')
+		this.setState({ loading: true })
+		promise.then(() => {
+			this.load()
+		})
+	}
+
+	load() {
+		const promise = fetch('http://localhost:7777/posts')
+		promise.then((response) => {
+			return response.json()
+		}).then((posts) => {
+			this.setState({
+				posts: posts,
+				loading: false
+			})
+		})
 	}
 
 }
